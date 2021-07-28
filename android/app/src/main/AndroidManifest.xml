@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.albertai.digital_contact_card">
    <application
-        android:label="digital_contact_card"
+        android:label="NeoMeet"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

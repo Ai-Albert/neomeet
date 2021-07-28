@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "930357010511",
+    "project_id": "digital-contact-card-f2843",
+    "storage_bucket": "digital-contact-card-f2843.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930357010511:android:2aa69fe2755eaab2880a3a",
+        "android_client_info": {
+          "package_name": "com.albertai.digital_contact_card"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "930357010511-ga92lj6hnor34b7dbpr71r6glnhe3v8u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALd_1TGsdodLH4dlmJvz0Kp7WROymlv7E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "930357010511-ga92lj6hnor34b7dbpr71r6glnhe3v8u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

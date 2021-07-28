@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>930357010511-k5r2jtou1e5pchuv4nmbnf0lege5h4fn.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.930357010511-k5r2jtou1e5pchuv4nmbnf0lege5h4fn</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA0VSUEQ_yHUpwtdP7xgd4rYQYVScnq_D0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>930357010511</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.albertai.digitalContactCard</string>
+	<key>PROJECT_ID</key>
+	<string>digital-contact-card-f2843</string>
+	<key>STORAGE_BUCKET</key>
+	<string>digital-contact-card-f2843.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:930357010511:ios:bd0e231c6631d0c0880a3a</string>
+</dict>
+</plist>
