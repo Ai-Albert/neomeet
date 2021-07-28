@@ -1,3 +1,6 @@
+import 'package:digital_contact_card/app/scanner.dart';
+import 'package:digital_contact_card/custom_widgets/bouncing_button.dart';
+import 'package:digital_contact_card/custom_widgets/utility_button.dart';
 import 'package:digital_contact_card/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -36,25 +39,69 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.blue, Colors.red],
+            colors: [Colors.red[400]!, Colors.cyanAccent[700]!],
           ),
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(width: MediaQuery.of(context).size.width),
-            TextButton(
-              onPressed: () => _confirmSignOut(context),
-              child: Text('logout', style: TextStyle(color: Colors.white)),
-            ),
+            _utilities(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _utilities() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            BouncingButton(
+              child: UtilityButton(
+                icon: Icons.qr_code_scanner,
+              ),
+              onPress: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => Scanner(),
+              )),
+            ),
+            SizedBox(width: 25),
+            BouncingButton(
+              child: UtilityButton(
+                icon: Icons.add,
+              ),
+              onPress: () {},
+            ),
+          ],
+        ),
+        SizedBox(height: 25),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            BouncingButton(
+              child: UtilityButton(
+                icon: Icons.settings,
+              ),
+              onPress: () {},
+            ),
+            SizedBox(width: 25),
+            BouncingButton(
+              child: UtilityButton(
+                icon: Icons.logout,
+              ),
+              onPress: () => _confirmSignOut(context),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

@@ -1,5 +1,8 @@
+import 'package:digital_contact_card/custom_widgets/bouncing_button.dart';
+import 'package:digital_contact_card/custom_widgets/outlined_text_button.dart';
+import 'package:digital_contact_card/custom_widgets/regular_button.dart';
 import 'package:digital_contact_card/custom_widgets/show_alert_dialog.dart';
-import 'package:digital_contact_card/sign_in/valildators.dart';
+import 'package:digital_contact_card/sign_in/validators.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,52 +26,17 @@ class _PasswordRecoveryState extends State<PasswordRecovery> with
     setState(() {});
   }
 
-  /********** ANIMATION STUFF **********/
-
-  late double _scale;
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 70),
-      lowerBound: 0.0,
-      upperBound: 0.07,
-    )..addListener(() {
-      setState(() {});
-    });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
-  }
-
-  void _tapDown(TapDownDetails details) {
-    _controller.forward();
-  }
-
-  void _tapUp(TapUpDetails details) {
-    _controller.reverse();
-  }
-
   /********** UI STUFF **********/
 
   @override
   Widget build(BuildContext context) {
-    bool emailValid = emailValidator.isValid(_email);
-    _scale = 1 - _controller.value;
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.blue, Colors.red],
+            colors: [Colors.red[400]!, Colors.cyanAccent[700]!],
           ),
         ),
         child: Padding(
@@ -89,10 +57,10 @@ class _PasswordRecoveryState extends State<PasswordRecovery> with
               ),
               SizedBox(height: 50.0),
               TextField(
-                style: TextStyle(color: Colors.white),
+                style: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white)),
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  labelStyle: TextStyle(color: Colors.white38),
+                  labelStyle: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white38)),
                   enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
                   focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
                 ),
@@ -104,14 +72,8 @@ class _PasswordRecoveryState extends State<PasswordRecovery> with
                 onChanged: (_email) => _updateState(),
               ),
               SizedBox(height: 30.0),
-              GestureDetector(
-                onTapDown: _tapDown,
-                onTapUp: _tapUp,
-                child: Transform.scale(
-                  scale: _scale,
-                  child: _sendButton(),
-                ),
-              ),
+              _sendButton(),
+              _backButton(),
             ],
           ),
         ),
@@ -120,16 +82,12 @@ class _PasswordRecoveryState extends State<PasswordRecovery> with
   }
 
   Widget _sendButton() {
-    return TextButton(
-      child: SizedBox(
+    return BouncingButton(
+      child: OutlinedTextButton(
         width: MediaQuery.of(context).size.width - 40 - 150,
-        child: Text(
-          "Send recovery email",
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white),
-        ),
+        text: "Send recovery email",
       ),
-      onPressed: () async {
+      onPress: () async {
         await FirebaseAuth.instance.sendPasswordResetEmail(email: _email);
         Navigator.pop(context);
         showAlertDialog(
@@ -139,13 +97,16 @@ class _PasswordRecoveryState extends State<PasswordRecovery> with
           defaultActionText: "OK",
         );
       },
-      style: ButtonStyle(
-        overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
-        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50.0),
-          side: BorderSide(color: Colors.white),
-        )),
+    );
+  }
+
+  Widget _backButton() {
+    return BouncingButton(
+      child: RegularButton(
+        width: MediaQuery.of(context).size.width - 40 - 150,
+        text: "Back",
       ),
+      onPress: () => Navigator.pop(context),
     );
   }
 }

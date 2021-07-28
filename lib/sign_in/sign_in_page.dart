@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digital_contact_card/app/home.dart';
-import 'package:digital_contact_card/custom_widgets/show_alert_dialog.dart';
+import 'package:digital_contact_card/custom_widgets/bouncing_button.dart';
+import 'package:digital_contact_card/custom_widgets/outlined_text_button.dart';
+import 'package:digital_contact_card/custom_widgets/regular_button.dart';
 import 'package:digital_contact_card/custom_widgets/show_exception_alert_dialog.dart';
 import 'package:digital_contact_card/services/auth.dart';
 import 'package:digital_contact_card/sign_in/password_recovery.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:digital_contact_card/sign_in/valildators.dart';
+import 'package:digital_contact_card/sign_in/validators.dart';
 
 enum FormType {signIn, register}
 
@@ -83,38 +84,6 @@ class _SignInPageState extends State<SignInPage> with
     );
   }
 
-  /********** ANIMATION STUFF **********/
-
-  late double _scale;
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 70),
-      lowerBound: 0.0,
-      upperBound: 0.07,
-    )..addListener(() {
-      setState(() {});
-    });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
-  }
-
-  void _tapDown(TapDownDetails details) {
-    _controller.forward();
-  }
-
-  void _tapUp(TapUpDetails details) {
-    _controller.reverse();
-  }
-
   /********** UI STUFF **********/
 
   @override
@@ -128,7 +97,6 @@ class _SignInPageState extends State<SignInPage> with
     bool submitValid = !_loading && emailValid && passwordValid;
     bool showEmailError = _submitted && !emailValid;
     bool showPasswordError = _submitted && !passwordValid;
-    _scale = 1 - _controller.value;
 
     return Scaffold(
       body: Container(
@@ -136,7 +104,7 @@ class _SignInPageState extends State<SignInPage> with
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.blue, Colors.red],
+            colors: [Colors.red[400]!, Colors.cyanAccent[700]!],
           ),
         ),
         child: Padding(
@@ -158,10 +126,10 @@ class _SignInPageState extends State<SignInPage> with
               ),
               SizedBox(height: 50.0),
               TextField(
-                style: TextStyle(color: Colors.white),
+                style: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white)),
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  labelStyle: TextStyle(color: Colors.white38),
+                  labelStyle: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white38)),
                   errorText: showEmailError ? 'Email can\'t be empty' : null,
                   errorStyle: TextStyle(color: Colors.white),
                   enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
@@ -176,10 +144,10 @@ class _SignInPageState extends State<SignInPage> with
               ),
               SizedBox(height: 10.0),
               TextField(
-                style: TextStyle(color: Colors.white),
+                style: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white)),
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  labelStyle: TextStyle(color: Colors.white38),
+                  labelStyle: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white38)),
                   errorText: showPasswordError ? 'Password can\'t be empty' : null,
                   errorStyle: TextStyle(color: Colors.white),
                   enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
@@ -193,14 +161,7 @@ class _SignInPageState extends State<SignInPage> with
                 onChanged: (_password) => _updateState(),
               ),
               SizedBox(height: 30.0),
-              GestureDetector(
-                onTapDown: _tapDown,
-                onTapUp: _tapUp,
-                child: Transform.scale(
-                  scale: _scale,
-                  child: _signInButton(primaryButtonText, submitValid),
-                ),
-              ),
+              _signInButton(primaryButtonText, submitValid),
               _switchButton(secondaryButtonText),
               _forgotPasswordButton(_formState == FormType.signIn ? "Forgot your password?" : " "),
             ],
@@ -211,69 +172,34 @@ class _SignInPageState extends State<SignInPage> with
   }
 
   Widget _signInButton(String primaryButtonText, bool submitValid) {
-    return TextButton(
-      child: SizedBox(
+    return BouncingButton(
+      child: OutlinedTextButton(
         width: MediaQuery.of(context).size.width - 40 - 150,
-        child: Text(
-          primaryButtonText,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white),
-        ),
+        text: primaryButtonText,
       ),
-      onPressed: submitValid ? submit : null,
-      style: ButtonStyle(
-        overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
-        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50.0),
-          side: BorderSide(color: Colors.white),
-        )),
-      ),
+      onPress: submitValid ? submit : () {},
     );
   }
 
   Widget _switchButton(String secondaryButtonText) {
-    return TextButton(
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width - 40 - 150,
-        child: Text(
-          secondaryButtonText,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+    return BouncingButton(
+      child: RegularButton(
+        width: MediaQuery.of(context).size.width - 40,
+        text: secondaryButtonText,
       ),
-      onPressed: !_loading ? changeFormType : null,
-      style: ButtonStyle(
-        overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
-        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50.0),
-        )),
-      ),
+      onPress: !_loading ? changeFormType : () {},
     );
   }
 
   Widget _forgotPasswordButton(String text) {
-    return TextButton(
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width - 40 - 150,
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+    return BouncingButton(
+      child: RegularButton(
+        width: MediaQuery.of(context).size.width - 40,
+        text: text,
       ),
-      onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+      onPress: text == " " ? () {} : () => Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PasswordRecovery(),
       )),
-      style: ButtonStyle(
-        overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
-        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50.0),
-        )),
-      ),
     );
   }
 }
