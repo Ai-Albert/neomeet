@@ -26,19 +26,23 @@ class FirestoreService {
   Stream<List<T>> collectionStream<T>({
     required String path,
     required T Function(Map<String, dynamic> data, String documentId) builder,
-    required Query Function(Query query) queryBuilder,
-    required int Function(T lhs, T rhs) sort,
+    Query Function(Query query)? queryBuilder,
+    int Function(T lhs, T rhs)? sort,
   }) {
     // Here the orderBy clause was added for this app specifically so DELETE for other apps
     Query query = FirebaseFirestore.instance.collection(path);
-    query = queryBuilder(query);
+    if (queryBuilder != null) {
+      query = queryBuilder(query);
+    }
     final snapshots = query.snapshots();
     return snapshots.map((snapshot) {
       final result = snapshot.docs
           .map((snapshot) => builder(snapshot.data(), snapshot.id))
           .where((value) => value != null)
           .toList();
-      result.sort(sort);
+      if (sort != null) {
+        result.sort(sort);
+      }
       return result;
     });
   }

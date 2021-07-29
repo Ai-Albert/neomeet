@@ -1,8 +1,16 @@
-import 'package:digital_contact_card/app/scanner.dart';
+import 'package:digital_contact_card/app/qr_page.dart';
+import 'package:digital_contact_card/app/utilities/add_page.dart';
+import 'package:digital_contact_card/app/helpers/list_items_builder.dart';
+import 'package:digital_contact_card/app/utilities/scanner.dart';
+import 'package:digital_contact_card/app/utilities/settings.dart';
 import 'package:digital_contact_card/custom_widgets/bouncing_button.dart';
+import 'package:digital_contact_card/custom_widgets/outlined_text_button.dart';
 import 'package:digital_contact_card/custom_widgets/utility_button.dart';
+import 'package:digital_contact_card/models/link_item.dart';
 import 'package:digital_contact_card/services/auth.dart';
+import 'package:digital_contact_card/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../custom_widgets/show_alert_dialog.dart';
 
@@ -52,10 +60,50 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(width: MediaQuery.of(context).size.width),
+            Text(
+              'Albert Ai',
+              style: GoogleFonts.comfortaa(
+                textStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 32.0,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 50,
+              width: MediaQuery.of(context).size.width - 100,
+              child: Divider(color: Colors.white, thickness: 1),
+            ),
+            SizedBox(height: 300, width: 225, child: _buildLinks(context)),
+            SizedBox(height: 50),
             _utilities(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLinks(BuildContext context) {
+    final database = Provider.of<Database>(context, listen: false);
+    return StreamBuilder<List<LinkItem>>(
+      stream: database.linksStream(),
+      builder: (context, snapshot) {
+        return ListItemsBuilder<LinkItem>(
+          snapshot: snapshot,
+          itemBuilder: (context, link) => BouncingButton(
+            child: OutlinedTextButton(
+              text: link.name,
+              width: MediaQuery.of(context).size.width - 200,
+            ),
+            onPress: () {
+              final database = Provider.of<Database>(context, listen: false);
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => QRPage(database: database, name: link.name, url: link.url),
+              ));
+            }
+          ),
+        );
+      },
     );
   }
 
@@ -78,7 +126,12 @@ class _HomeState extends State<Home> {
               child: UtilityButton(
                 icon: Icons.add,
               ),
-              onPress: () {},
+              onPress: () {
+                final database = Provider.of<Database>(context, listen: false);
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => AddPage(database: database),
+                ));
+              },
             ),
           ],
         ),
@@ -90,7 +143,9 @@ class _HomeState extends State<Home> {
               child: UtilityButton(
                 icon: Icons.settings,
               ),
-              onPress: () {},
+              onPress: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => Settings(),
+              )),
             ),
             SizedBox(width: 25),
             BouncingButton(
