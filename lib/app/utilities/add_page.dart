@@ -126,7 +126,7 @@ class _AddPageState extends State<AddPage> {
     return TextField(
       style: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white)),
       decoration: InputDecoration(
-        labelText: 'Link (must start with https://www. or http://www.)',
+        labelText: 'Link',
         labelStyle: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white38)),
         enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
         focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
@@ -135,7 +135,7 @@ class _AddPageState extends State<AddPage> {
       controller: TextEditingController(text: url),
       autocorrect: false,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       onChanged: (link) => this.url = link,
     );
   }

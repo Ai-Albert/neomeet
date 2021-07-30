@@ -1,12 +1,14 @@
+import 'package:digital_contact_card/app/contact_qr.dart';
 import 'package:digital_contact_card/app/qr_page.dart';
 import 'package:digital_contact_card/app/utilities/add_page.dart';
 import 'package:digital_contact_card/app/helpers/list_items_builder.dart';
 import 'package:digital_contact_card/app/utilities/scanner.dart';
-import 'package:digital_contact_card/app/utilities/settings.dart';
+import 'package:digital_contact_card/app/utilities/user_settings.dart';
 import 'package:digital_contact_card/custom_widgets/bouncing_button.dart';
 import 'package:digital_contact_card/custom_widgets/outlined_text_button.dart';
 import 'package:digital_contact_card/custom_widgets/utility_button.dart';
 import 'package:digital_contact_card/models/link_item.dart';
+import 'package:digital_contact_card/models/person.dart';
 import 'package:digital_contact_card/services/auth.dart';
 import 'package:digital_contact_card/services/database.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +22,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  late Person user;
 
   // Signs out using Firebase
   Future _signOut() async {
@@ -46,40 +50,66 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [Colors.red[400]!, Colors.cyanAccent[700]!],
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(width: MediaQuery.of(context).size.width),
-            Text(
-              'Albert Ai',
-              style: GoogleFonts.comfortaa(
-                textStyle: TextStyle(
-                  color: Colors.white,
-                  fontSize: 32.0,
-                ),
+    return StreamBuilder<List<Person>>(
+      stream: Provider.of<Database>(context).contactStream(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          user = Person.fromMap(null);
+        }
+        else {
+          user = snapshot.data!.isNotEmpty ? snapshot.data![0] : Person.fromMap(null);
+        }
+        return Scaffold(
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [Colors.red[400]!, Colors.cyanAccent[700]!],
               ),
             ),
-            SizedBox(
-              height: 50,
-              width: MediaQuery.of(context).size.width - 100,
-              child: Divider(color: Colors.white, thickness: 1),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(width: MediaQuery.of(context).size.width),
+                Text(
+                  '${user.fname} ${user.lname}',
+                  style: GoogleFonts.comfortaa(
+                    textStyle: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32.0,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width - 100,
+                  child: Divider(color: Colors.white, thickness: 1),
+                ),
+                BouncingButton(
+                  child: OutlinedTextButton(
+                    text: 'Contact Info',
+                    width: MediaQuery.of(context).size.width - 200,
+                  ),
+                  onPress: () {
+                    final database = Provider.of<Database>(context, listen: false);
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ContactQR(database: database, person: this.user),
+                    ));
+                  }
+                ),
+                SizedBox(
+                    height: 300,
+                    child: _buildLinks(context),
+                ),
+                SizedBox(height: 50),
+                _utilities(person: user),
+              ],
             ),
-            SizedBox(height: 300, width: 225, child: _buildLinks(context)),
-            SizedBox(height: 50),
-            _utilities(),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -102,12 +132,13 @@ class _HomeState extends State<Home> {
               ));
             }
           ),
+          width: 90,
         );
       },
     );
   }
 
-  Widget _utilities() {
+  Widget _utilities({Person? person}) {
     return Column(
       children: [
         Row(
@@ -143,9 +174,13 @@ class _HomeState extends State<Home> {
               child: UtilityButton(
                 icon: Icons.settings,
               ),
-              onPress: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => Settings(),
-              )),
+              onPress: () {
+                final database = Provider.of<Database>(context, listen: false);
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => UserSettings(database: database, person: person),
+                ));
+                setState(() {});
+              }
             ),
             SizedBox(width: 25),
             BouncingButton(

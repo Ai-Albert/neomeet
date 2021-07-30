@@ -1,8 +1,12 @@
 import 'package:digital_contact_card/custom_widgets/bouncing_button.dart';
 import 'package:digital_contact_card/custom_widgets/outlined_text_button.dart';
 import 'package:digital_contact_card/custom_widgets/regular_button.dart';
+import 'package:digital_contact_card/custom_widgets/show_alert_dialog.dart';
+import 'package:digital_contact_card/models/person.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/contact.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,6 +25,19 @@ class _ScannerState extends State<Scanner> {
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  Future _confirmAddContact(BuildContext context, Contact contact) async {
+    final request = await showAlertDialog(
+      context,
+      title: 'Add ${contact.name.first} ${contact.name.last}',
+      content: 'Add new contact?',
+      cancelActionText: 'Cancel',
+      defaultActionText: 'Add',
+    );
+    if (request) {
+      await contact.insert();
+    }
   }
 
   @override
@@ -76,10 +93,26 @@ class _ScannerState extends State<Scanner> {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) async {
       controller.pauseCamera();
-      if (await canLaunch(scanData.code)) {
+      if (scanData.code.startsWith('CONTACT')) {
+        print(scanData.code);
+        final person = Person.fromString(scanData.code);
+        final contact = Contact()
+          ..name.first = person.fname
+          ..name.last = person.lname
+          ..phones = [Phone(person.phoneNumber)]
+          ..emails = [Email(person.email)];
+        if (await FlutterContacts.requestPermission()) _confirmAddContact(context, contact);
+        controller.resumeCamera();
+      }
+      else if (await canLaunch(scanData.code)) {
         await launch(scanData.code);
         controller.resumeCamera();
-      } else {
+      }
+      else if (await canLaunch("https://" + scanData.code)) {
+        await launch("https://" + scanData.code);
+        controller.resumeCamera();
+      }
+      else {
         showDialog(
           context: context,
           builder: (BuildContext context) {
