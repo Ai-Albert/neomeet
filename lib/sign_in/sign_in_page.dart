@@ -104,7 +104,7 @@ class _SignInPageState extends State<SignInPage> with
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.red[400]!, Colors.cyanAccent[700]!],
+            colors: [Color(int.parse('0xFFE53935')), Color(int.parse('0xFF00ACC1'))],
           ),
         ),
         child: Padding(

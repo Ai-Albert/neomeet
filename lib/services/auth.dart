@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class AuthBase {
   User get currentUser;
-  AuthCredential get userCredential;
+
   Stream<User?> authStateChanges();
   Future<User?> signInEmail(String email, String password);
   Future<User?> createUserEmail(String email, String password);
@@ -13,30 +13,31 @@ abstract class AuthBase {
 class Auth implements AuthBase {
 
   final _firebaseAuth = FirebaseAuth.instance;
-  late AuthCredential credential;
+  late String _email;
+  late String _password;
 
   @override
   User get currentUser => _firebaseAuth.currentUser!;
-
-  @override
-  AuthCredential get userCredential => this.credential;
 
   @override
   Stream<User?> authStateChanges() => _firebaseAuth.authStateChanges();
 
   @override
   Future<User?> signInEmail(String email, String password) async {
-    this.credential = EmailAuthProvider.credential(
+    this._email = email;
+    this._password = password;
+    var credential = EmailAuthProvider.credential(
       email: email,
       password: password,
     );
-    final userCredential = await _firebaseAuth.signInWithCredential(this.credential);
+    final userCredential = await _firebaseAuth.signInWithCredential(credential);
     return userCredential.user;
   }
 
   @override
   Future<User?> createUserEmail(String email, String password) async {
-    this.credential = EmailAuthProvider.credential(email: email, password: password);
+    this._email = email;
+    this._password = password;
     final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -50,8 +51,11 @@ class Auth implements AuthBase {
   }
 
   Future<void> deleteAccount() async {
-    print("credential: ${this.credential}");
-    await currentUser.reauthenticateWithCredential(this.credential);
+    var credential = EmailAuthProvider.credential(
+      email: _email,
+      password: _password,
+    );
+    await currentUser.reauthenticateWithCredential(credential);
     await currentUser.delete();
   }
 }

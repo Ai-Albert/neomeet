@@ -44,7 +44,7 @@ class _ColorSelectorState extends State<ColorSelector> {
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
-      //focusColor: ,
+      iconEnabledColor: Colors.white,
       dropdownColor: Colors.black,
       value: currColor!,
       style: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white)),

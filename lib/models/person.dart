@@ -21,8 +21,8 @@ class Person {
       lname: 'LAST',
       phoneNumber: 'N/A',
       email: 'N/A',
-      color1: '0xFF01579B', //'0xFFEF5350',
-      color2: '0xFFAB47BC', //'0xFF00B8D4',
+      color1: '0xFFE53935',
+      color2: '0xFF00ACC1',
     );
     return Person.fromString(data['vcard'], data['color1'], data['color2']);
   }
@@ -33,8 +33,8 @@ class Person {
       lname: 'LAST',
       phoneNumber: 'N/A',
       email: 'N/A',
-      color1: '0xFF01579B', //'0xFFEF5350',
-      color2: '0xFFAB47BC', //'0xFF00B8D4',
+      color1: '0xFFE53935',
+      color2: '0xFF00ACC1',
     );
     List<String> split = data.split(';');
     return Person(

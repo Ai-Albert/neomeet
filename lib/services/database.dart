@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digital_contact_card/models/person.dart';
 import 'package:digital_contact_card/services/api_path.dart';
 import 'package:digital_contact_card/services/firestore_service.dart';
@@ -56,6 +57,15 @@ class FirestoreDatabase implements Database {
   // Deleting all of a user's data prior to account deletion
   @override
   Future<void> deleteData() async {
-    //
+    // Deleting contact info
+    _service.deleteData(path: APIPath.contactDoc(uid));
+
+    // Deleting links
+    var links = FirebaseFirestore.instance.collection(APIPath.links(uid));
+    var snapshotsLinks = await links.get();
+    for (var link in snapshotsLinks.docs) {
+      await this.deleteLink(link.id);
+      await link.reference.delete();
+    }
   }
 }

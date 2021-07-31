@@ -3,13 +3,16 @@ import 'package:digital_contact_card/custom_widgets/bouncing_button.dart';
 import 'package:digital_contact_card/custom_widgets/color_selector.dart';
 import 'package:digital_contact_card/custom_widgets/outlined_text_button.dart';
 import 'package:digital_contact_card/custom_widgets/regular_button.dart';
+import 'package:digital_contact_card/custom_widgets/show_alert_dialog.dart';
 import 'package:digital_contact_card/custom_widgets/show_exception_alert_dialog.dart';
 import 'package:digital_contact_card/models/person.dart';
+import 'package:digital_contact_card/services/auth.dart';
 import 'package:digital_contact_card/services/database.dart';
 import 'package:digital_contact_card/sign_in/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class UserSettings extends StatefulWidget {
   const UserSettings({Key? key, required this.database, required this.person}) : super(key: key);
@@ -59,6 +62,35 @@ class _UserSettingsState extends State<UserSettings> with EmailAndPasswordValida
         title: 'Please enter a valid name',
         exception: e,
       );
+    }
+  }
+
+  // Deletes account and associated data
+  Future _accountDelete() async {
+    try {
+      await widget.database.deleteData();
+      await Provider.of<AuthBase>(context, listen: false).deleteAccount();
+      Navigator.of(context).pop();
+    } catch (e) {
+      showExceptionAlertDialog(
+        context,
+        title: "Operation failed",
+        exception: new Exception("Try signing out and in again to do this."),
+      );
+    }
+  }
+
+  // Asks user to confirm account and data deletion
+  Future _confirmAccountDelete(BuildContext context) async {
+    final request = await showAlertDialog(
+      context,
+      title: 'Delete Account',
+      content: 'Are you sure you want to delete your account and data?',
+      cancelActionText: 'Cancel',
+      defaultActionText: 'Delete',
+    );
+    if (request) {
+      _accountDelete();
     }
   }
 
@@ -189,9 +221,16 @@ class _UserSettingsState extends State<UserSettings> with EmailAndPasswordValida
                 BouncingButton(
                   child: OutlinedTextButton(
                     text: "Save",
-                    width: 75,
+                    width: 150,
                   ),
                   onPress: () => _saveInfo(),
+                ),
+                BouncingButton(
+                  child: OutlinedTextButton(
+                    text: "Delete account",
+                    width: 150,
+                  ),
+                  onPress: () => _confirmAccountDelete(context),
                 ),
                 BouncingButton(
                   child: RegularButton(width: 100, text: "Back"),
