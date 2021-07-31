@@ -21,6 +21,7 @@ class _ColorSelectorState extends State<ColorSelector> {
     'Blue': '0xFF0288D1',
     'Purple': '0xFF8E24AA',
     'Pink': '0xFFD81B60',
+    'Black': '0xFF000000',
   };
   Map<String, String> colorMap2 = {
     '0xFFE53935': 'Red',
@@ -32,6 +33,7 @@ class _ColorSelectorState extends State<ColorSelector> {
     '0xFF0288D1': 'Blue',
     '0xFF8E24AA': 'Purple',
     '0xFFD81B60': 'Pink',
+    '0xFF000000': 'Black',
   };
   late String? currColor;
 
