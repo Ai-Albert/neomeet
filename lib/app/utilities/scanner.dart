@@ -94,7 +94,7 @@ class _ScannerState extends State<Scanner> {
     controller.scannedDataStream.listen((scanData) async {
       controller.pauseCamera();
       if (scanData.code.startsWith('MECARD')) {
-        final person = Person.fromString(scanData.code);
+        final person = Person.fromString(scanData.code, '', '');
         final contact = Contact()
           ..name.first = person.fname
           ..name.last = person.lname

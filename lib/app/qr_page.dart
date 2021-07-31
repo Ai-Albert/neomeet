@@ -3,17 +3,19 @@ import 'package:digital_contact_card/custom_widgets/bouncing_button.dart';
 import 'package:digital_contact_card/custom_widgets/outlined_text_button.dart';
 import 'package:digital_contact_card/custom_widgets/regular_button.dart';
 import 'package:digital_contact_card/custom_widgets/show_alert_dialog.dart';
+import 'package:digital_contact_card/models/person.dart';
 import 'package:digital_contact_card/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QRPage extends StatefulWidget {
-  const QRPage({Key? key, required this.database, required this.name, required this.url}) : super(key: key);
+  const QRPage({Key? key, required this.database, required this.name, required this.url, required this.person}) : super(key: key);
 
   final Database database;
   final String name;
   final String url;
+  final Person person;
 
   @override
   _QRPageState createState() => _QRPageState();
@@ -53,7 +55,7 @@ class _QRPageState extends State<QRPage> {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.red[400]!, Colors.cyanAccent[700]!],
+            colors: [Color(int.parse(widget.person.color1)), Color(int.parse(widget.person.color2))],
           ),
         ),
         child: Padding(
@@ -93,6 +95,7 @@ class _QRPageState extends State<QRPage> {
                       database: widget.database,
                       name: name == "" ? widget.name : name,
                       url: url == "" ? widget.url : url,
+                      person: widget.person,
                     ),
                   ));
                   name = results[0];

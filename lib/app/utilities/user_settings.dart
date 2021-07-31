@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digital_contact_card/custom_widgets/bouncing_button.dart';
+import 'package:digital_contact_card/custom_widgets/color_selector.dart';
 import 'package:digital_contact_card/custom_widgets/outlined_text_button.dart';
 import 'package:digital_contact_card/custom_widgets/regular_button.dart';
 import 'package:digital_contact_card/custom_widgets/show_exception_alert_dialog.dart';
@@ -26,6 +27,7 @@ class _UserSettingsState extends State<UserSettings> with EmailAndPasswordValida
   late String lname;
   late String phone;
   late String email;
+  List<String> colors = ['', ''];
 
   @override
   void initState() {
@@ -34,13 +36,15 @@ class _UserSettingsState extends State<UserSettings> with EmailAndPasswordValida
     lname = widget.person!.lname;
     phone = widget.person!.phoneNumber;
     email = widget.person!.email;
+    colors[0] = widget.person!.color1;
+    colors[1] = widget.person!.color2;
   }
 
   Future<void> _saveInfo() async {
     try {
       if (fname == '') throw new FormatException('EMPTY_FIRST_NAME');
       if (lname == '') throw new FormatException('EMPTY_LAST_NAME');
-      final Person person = Person(fname: fname, lname: lname, phoneNumber: phone, email: email);
+      final Person person = Person(fname: fname, lname: lname, phoneNumber: phone, email: email, color1: colors[0], color2: colors[1]);
       await widget.database.setContact(person);
       Navigator.of(context).pop();
     } on FirebaseException catch (e) {
@@ -70,9 +74,9 @@ class _UserSettingsState extends State<UserSettings> with EmailAndPasswordValida
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [Colors.red[400]!, Colors.cyanAccent[700]!],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+            colors: [Color(int.parse(colors[0])), Color(int.parse(colors[1]))],
           ),
         ),
         child: SingleChildScrollView(
@@ -127,6 +131,7 @@ class _UserSettingsState extends State<UserSettings> with EmailAndPasswordValida
                   textInputAction: TextInputAction.next,
                   onChanged: (lname) => this.lname = lname,
                 ),
+                SizedBox(height: 10.0),
                 TextField(
                   style: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white)),
                   decoration: InputDecoration(
@@ -142,6 +147,7 @@ class _UserSettingsState extends State<UserSettings> with EmailAndPasswordValida
                   textInputAction: TextInputAction.next,
                   onChanged: (phone) => this.phone = phone,
                 ),
+                SizedBox(height: 10.0),
                 TextField(
                   style: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white)),
                   decoration: InputDecoration(
@@ -156,6 +162,28 @@ class _UserSettingsState extends State<UserSettings> with EmailAndPasswordValida
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.done,
                   onChanged: (email) => this.email = email,
+                ),
+                SizedBox(height: 10.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Top Color:',
+                      style: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white)),
+                    ),
+                    ColorSelector(colors: colors, colorNum: 0),
+                  ],
+                ),
+                SizedBox(height: 10.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Bottom Color:',
+                      style: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white)),
+                    ),
+                    ColorSelector(colors: colors, colorNum: 1),
+                  ],
                 ),
                 SizedBox(height: 30),
                 BouncingButton(

@@ -3,16 +3,18 @@ import 'package:digital_contact_card/custom_widgets/bouncing_button.dart';
 import 'package:digital_contact_card/custom_widgets/outlined_text_button.dart';
 import 'package:digital_contact_card/custom_widgets/regular_button.dart';
 import 'package:digital_contact_card/custom_widgets/show_exception_alert_dialog.dart';
+import 'package:digital_contact_card/models/person.dart';
 import 'package:digital_contact_card/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AddPage extends StatefulWidget {
-  const AddPage({Key? key, required this.database, this.name, this.url}) : super(key: key);
+  const AddPage({Key? key, required this.database, this.name, this.url, required this.person}) : super(key: key);
 
   final Database database;
   final String? name;
   final String? url;
+  final Person person;
 
   @override
   _AddPageState createState() => _AddPageState();
@@ -62,7 +64,7 @@ class _AddPageState extends State<AddPage> {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.red[400]!, Colors.cyanAccent[700]!],
+            colors: [Color(int.parse(widget.person.color1)), Color(int.parse(widget.person.color2))],
           ),
         ),
         child: Padding(

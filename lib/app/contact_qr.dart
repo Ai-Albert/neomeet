@@ -25,7 +25,7 @@ class _ContactQRState extends State<ContactQR> {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.red[400]!, Colors.cyanAccent[700]!],
+            colors: [Color(int.parse(widget.person.color1)), Color(int.parse(widget.person.color2))],
           ),
         ),
         child: Padding(

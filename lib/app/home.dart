@@ -65,7 +65,7 @@ class _HomeState extends State<Home> {
               gradient: LinearGradient(
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
-                colors: [Colors.red[400]!, Colors.cyanAccent[700]!],
+                colors: [Color(int.parse(user.color1)), Color(int.parse(user.color2))],
               ),
             ),
             child: Column(
@@ -128,7 +128,7 @@ class _HomeState extends State<Home> {
             onPress: () {
               final database = Provider.of<Database>(context, listen: false);
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => QRPage(database: database, name: link.name, url: link.url),
+                builder: (context) => QRPage(database: database, name: link.name, url: link.url, person: user),
               ));
             }
           ),
@@ -160,7 +160,7 @@ class _HomeState extends State<Home> {
               onPress: () {
                 final database = Provider.of<Database>(context, listen: false);
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => AddPage(database: database),
+                    builder: (context) => AddPage(database: database, person: this.user),
                 ));
               },
             ),
