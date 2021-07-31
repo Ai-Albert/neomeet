@@ -93,8 +93,7 @@ class _ScannerState extends State<Scanner> {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) async {
       controller.pauseCamera();
-      if (scanData.code.startsWith('CONTACT')) {
-        print(scanData.code);
+      if (scanData.code.startsWith('MECARD')) {
         final person = Person.fromString(scanData.code);
         final contact = Contact()
           ..name.first = person.fname
@@ -108,21 +107,19 @@ class _ScannerState extends State<Scanner> {
         await launch(scanData.code);
         controller.resumeCamera();
       }
-      else if (await canLaunch("https://" + scanData.code)) {
-        await launch("https://" + scanData.code);
-        controller.resumeCamera();
-      }
       else {
+        print(scanData.code);
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Could not find viable url'),
+              title: Text('Could not find viable code'),
               content: SingleChildScrollView(
                 child: ListBody(
                   children: <Widget>[
                     Text('Barcode Type: ${describeEnum(scanData.format)}'),
                     Text('Data: ${scanData.code}'),
+                    Text('NOTE: contact info must be in mecard format (not vcard)'),
                   ],
                 ),
               ),

@@ -36,6 +36,7 @@ class _AddPageState extends State<AddPage> {
       if (name == '') throw new FormatException('EMPTY_NAME');
       if (url == '') throw new FormatException('EMPTY_URL');
       if (oldName != '' && oldName != name) await widget.database.deleteLink(oldName);
+      if (!url.startsWith('https://')) url = 'https://' + url;
       await widget.database.setLink(name, url);
       Navigator.of(context).pop([name, url]);
     } on FirebaseException catch (e) {

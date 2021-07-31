@@ -67,7 +67,7 @@ class _ContactQRState extends State<ContactQR> {
 
   Widget _buildQR() {
     return QrImage(
-      data: widget.person.toMap()['contact']!,
+      data: widget.person.toMap()['vcard']!,
       version: QrVersions.auto,
       size: 300,
     );
