@@ -23,7 +23,7 @@ class RegularButton extends StatelessWidget {
           style: GoogleFonts.montserrat(textStyle: TextStyle(color: Colors.white)),
         ),
       ),
-      onPressed: () => HapticFeedback.vibrate(),
+      onPressed: () => HapticFeedback.lightImpact(),
       style: ButtonStyle(
         overlayColor: MaterialStateColor.resolveWith((states) => Colors.transparent),
         shape: MaterialStateProperty.all(RoundedRectangleBorder(
